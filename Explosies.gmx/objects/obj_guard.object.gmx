@@ -26,8 +26,10 @@
           <argument>
             <kind>1</kind>
             <string>state = "patrol"
-target_x = "false";
-target_y = "false";
+target_x = -1;
+target_y = -1;
+
+phy_fixed_rotation = true;
 </string>
           </argument>
         </arguments>
@@ -52,16 +54,28 @@ target_y = "false";
             <kind>1</kind>
             <string>var target = instance_nearest(x, y, obj_player);
 switch(state){
-    case "patroling":
+    case "patrol":
         if collision_line( x, y, target.x, target.y, par_collide, true, true ) == noone{
-            state = "aproach"
+            state = "approach"
+        }
+        if target_x != -1{
+            if target_x &gt; x{
+                phy_speed_x = 3;
+            }else{
+                phy_speed_x = -3;
+            }
         }
         break;
     case "approach":
         if target.x &gt; x{
-            phy_speed_x = 6;
+            phy_speed_x = 3;
         }else{
-            phy_speed_x = -6;
+            phy_speed_x = -3;
+        }
+        if collision_line( x, y, target.x, target.y, par_collide, true, true ) != noone{
+            state = "patrol"
+            target_x = target.x;
+            target_y = target.y;
         }
         break;
 }
